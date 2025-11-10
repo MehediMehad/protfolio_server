@@ -1,0 +1,38 @@
+Create develop branch
+Common Types (Conventional Commits)
+
+feat: Add new feature
+
+feat: Add user registration form
+
+fix: Fix bug
+
+fix: Resolve crash on login
+
+docs: Change documentation only
+
+docs: Update API usage in README
+
+style: Change code style (no logic change)
+
+style: Format code with Prettier
+
+refactor: Refactor code
+
+refactor: Simplify authentication logic
+
+test: Add/change tests
+
+test: Add unit tests for user service
+
+chore: Update build tools, dependencies, etc.
+
+chore: Update npm dependencies
+
+✨ Good and bad examples
+
+✔️ Good:
+
+feat: Add search bar to homepage
+
+Users can now search products by name or category.

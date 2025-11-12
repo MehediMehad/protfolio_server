@@ -13,14 +13,64 @@ model User {
   name       String
   image      String?
   provider   JoinedProvider
+  role       Role           @default(USER)
   providerId String
   joinedAt   DateTime       @default(now())
 
+  meetings  Meeting[]
+  schedules Schedule[]
+
   @@map("users")
+}
+
+model Schedule {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  adminId String @db.ObjectId
+  admin   User   @relation(fields: [adminId], references: [id])
+
+  date      DateTime // specific date of the schedule
+  startTime DateTime // available start time
+  endTime   DateTime // available end time
+  isBooked  Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  meeting   Meeting?
+
+  @@map("schedules")
+}
+
+model Meeting {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  platform    MeetingPlatform // e.g., zoom, google_meet
+  link        String
+  userId      String          @db.ObjectId
+  user        User            @relation(fields: [userId], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  scheduleId String?   @unique @db.ObjectId
+  schedule   Schedule? @relation(fields: [scheduleId], references: [id])
+
+  @@map("meetings")
 }
 
 enum JoinedProvider {
   google
   github
   facebook
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MeetingPlatform {
+  zoom
+  google_meet
 }

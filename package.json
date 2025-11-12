@@ -1,5 +1,5 @@
 {
-  "name": "aayaam_filarakos",
+  "name": "backend",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
@@ -12,8 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "check-format": "prettier --check .",
-    "generate:module": "node scripts/generateModule.js"
+    "check-format": "prettier --check ."
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,5 @@
+import type { RoleEnum } from '@prisma/client';
+import { UserStatusEnum } from '@prisma/client';
 import type { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import type { JwtPayload, Secret } from 'jsonwebtoken';
@@ -7,7 +9,6 @@ import ApiError from '../errors/ApiError';
 import type { TAuthPayload } from '../helpers/jwtHelpers';
 import { jwtHelpers } from '../helpers/jwtHelpers';
 import prisma from '../libs/prisma';
-import { RoleEnum, UserStatusEnum } from '@prisma/client';
 
 const auth =
   (...roles: RoleEnum[]) =>

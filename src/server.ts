@@ -5,11 +5,8 @@ import { Server as SocketIOServer } from 'socket.io';
 import app from './app';
 import appConfig from './app/configs/app.config';
 import { getLocalIP } from './app/helpers/devHelpers';
-import { initializeSocket } from './app/modules/chat/chat.socket';
-import { createUploadsFolder } from './app/utils/uploads.util';
 
 let server: HttpServer;
-let io: SocketIOServer;
 
 async function main() {
   try {
@@ -17,19 +14,7 @@ async function main() {
     const port = appConfig.port || 5000;
     server = app.listen(port, async () => {
       console.log(`🚀 Server is running on port ${port}`);
-      createUploadsFolder(); // 📁 Create (Uploads) Folder
       getLocalIP(); // 🖥️ Your PC's local IPv4 address(es)
-
-      // Initialize Socket.IO
-      io = new SocketIOServer(server, {
-        cors: {
-          origin: '*', // Adjust based on your frontend URL
-          methods: ['GET', 'POST'],
-        },
-      });
-
-      // Pass io to socket handler
-      initializeSocket(io);
     });
 
     // 🔐 Handle Uncaught Exceptions

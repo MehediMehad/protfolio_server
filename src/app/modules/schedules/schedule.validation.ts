@@ -2,10 +2,11 @@ import { z } from 'zod';
 
 // Regex for validating a MongoDB ObjectId (24 hex characters)
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
 // Time must be in HH:MM format, where MM = 00 or 30
 const timeSchema = z
   .string()
-  .regex(/^([01]\d|2[0-3]):(00|30)$/, 'Time must be in HH:MM format and minutes must be 00 or 30');
+  .regex(/^([01]\d|2[0-3]):(30)$/, 'Time must be in HH:MM format and minutes must be 00 or 30');
 
 // Function to convert HH:MM to minutes for easy comparison
 const timeToMinutes = (time: string) => {

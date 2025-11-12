@@ -1,8 +1,9 @@
 import express from 'express';
-import auth from '../../middlewares/auth';
+
 import { ScheduleControllers } from './schedule.controller';
-import validateRequest from '../../middlewares/validateRequest';
 import ScheduleValidations from './schedule.validation';
+import auth from '../../middlewares/auth';
+import validateRequest from '../../middlewares/validateRequest';
 
 const router = express.Router();
 

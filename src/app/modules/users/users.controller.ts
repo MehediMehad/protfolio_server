@@ -1,8 +1,8 @@
 import httpStatus from 'http-status';
 
+import { UsersServices } from './users.service';
 import catchAsync from '../../helpers/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { UsersServices } from './users.service';
 
 const createOrGetUser = catchAsync(async (req, res) => {
   const result = await UsersServices.createOrGetUser(req.body);

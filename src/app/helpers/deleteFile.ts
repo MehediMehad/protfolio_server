@@ -3,7 +3,7 @@ import path from 'path';
 
 import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 
-import { s3Client } from '../configs/s3Client';
+import { s3Client } from '../libs/s3Client';
 
 const deleteUploadImage = async (imagePath: string): Promise<boolean> => {
   try {

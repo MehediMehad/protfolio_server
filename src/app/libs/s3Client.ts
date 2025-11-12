@@ -3,7 +3,7 @@ import path from 'path';
 import { S3Client } from '@aws-sdk/client-s3';
 import dotenv from 'dotenv';
 
-import config from '.';
+import config from '../configs';
 
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 

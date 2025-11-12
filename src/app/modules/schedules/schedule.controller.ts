@@ -1,7 +1,8 @@
+import httpStatus from 'http-status';
+
+import { ScheduleServices } from './schedule.service';
 import catchAsync from '../../helpers/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import httpStatus from 'http-status';
-import { ScheduleServices } from './schedule.service';
 
 const createSchedule = catchAsync(async (req, res) => {
   const result = await ScheduleServices.createSchedule(req.body);

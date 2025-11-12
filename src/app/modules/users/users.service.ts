@@ -1,4 +1,5 @@
-import { Secret } from 'jsonwebtoken';
+import type { Secret } from 'jsonwebtoken';
+
 import authConfig from '../../configs/auth.config';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import prisma from '../../libs/prisma';

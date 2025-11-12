@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id         String         @id @default(auto()) @map("_id") @db.ObjectId
-  email      String         @unique
+  id         String             @id @default(auto()) @map("_id") @db.ObjectId
+  email      String             @unique
   name       String
   image      String?
-  provider   JoinedProvider
-  role       Role           @default(USER)
+  provider   JoinedProviderEnum
+  role       RoleEnum           @default(USER)
+  status     UserStatusEnum     @default(ACTIVE)
   providerId String
-  joinedAt   DateTime       @default(now())
+  joinedAt   DateTime           @default(now())
 
   meetings  Meeting[]
   schedules Schedule[]
@@ -37,21 +38,22 @@ model Schedule {
   updatedAt DateTime @updatedAt
   meeting   Meeting?
 
+  @@unique([date, startTime, endTime], name: "unique_schedule_slot")
   @@map("schedules")
 }
 
 model Meeting {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  id          String              @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String?
   startTime   DateTime
   endTime     DateTime
-  platform    MeetingPlatform // e.g., zoom, google_meet
+  platform    MeetingPlatformEnum // e.g., zoom, google_meet
   link        String
-  userId      String          @db.ObjectId
-  user        User            @relation(fields: [userId], references: [id])
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  userId      String              @db.ObjectId
+  user        User                @relation(fields: [userId], references: [id])
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   scheduleId String?   @unique @db.ObjectId
   schedule   Schedule? @relation(fields: [scheduleId], references: [id])
@@ -59,18 +61,23 @@ model Meeting {
   @@map("meetings")
 }
 
-enum JoinedProvider {
+enum JoinedProviderEnum {
   google
   github
   facebook
 }
 
-enum Role {
+enum RoleEnum {
   USER
   ADMIN
 }
 
-enum MeetingPlatform {
+enum MeetingPlatformEnum {
   zoom
   google_meet
+}
+
+enum UserStatusEnum {
+  ACTIVE
+  BLOCKED
 }

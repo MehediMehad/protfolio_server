@@ -5,7 +5,6 @@ import prisma from '../../libs/prisma';
 const createSchedule = async (payload: CreateScheduleSchema, adminId: string) => {
   const { date, startTime, endTime } = payload;
 
-
   console.log({ payload });
 
   const schedule = await prisma.schedule.create({
@@ -32,14 +31,14 @@ const getAvailableSchedules = async () => {
       date: true,
       startTime: true,
       endTime: true,
-      isBooked: true
-    }
+      isBooked: true,
+    },
   });
 
-  return available
+  return available;
 };
 
 export const ScheduleServices = {
   createSchedule,
-  getAvailableSchedules
+  getAvailableSchedules,
 };

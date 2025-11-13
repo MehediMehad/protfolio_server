@@ -1,37 +1,31 @@
 import type { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
 import jwt from 'jsonwebtoken';
+
 import authConfig from '../configs/auth.config';
 
 export interface TAuthPayload {
-    userId: string;
-    email: string;
-    role: string;
+  userId: string;
+  email: string;
+  role: string;
 }
 
-const verifyToken = (token: string, secret: Secret) => {
-    return jwt.verify(token, secret) as JwtPayload;
+const verifyToken = (token: string, secret: Secret) => jwt.verify(token, secret) as JwtPayload;
+
+const generateToken = (payload: TAuthPayload, secret: Secret, expiresIn: string) => {
+  const options: SignOptions = {
+    algorithm: 'HS256',
+    expiresIn,
+  } as jwt.SignOptions;
+  const token = jwt.sign(payload, secret, options);
+  return token;
 };
 
-const generateToken = (
-    payload: TAuthPayload,
-    secret: Secret,
-    expiresIn: string
-) => {
-    const options: SignOptions = {
-        algorithm: 'HS256',
-        expiresIn
-    } as jwt.SignOptions;
-    const token = jwt.sign(payload, secret, options);
-    return token;
-};
-
- const generateAuthTokens = (
+const generateAuthTokens = (
   data: TAuthPayload,
 ): {
   accessToken: string;
   refreshToken: string;
 } => {
-
   // Access Token generate
   const accessToken = generateToken(
     data,
@@ -50,10 +44,9 @@ const generateToken = (
     accessToken,
     refreshToken,
   };
-
-}
+};
 
 export const jwtHelpers = {
   verifyToken,
-  generateAuthTokens
+  generateAuthTokens,
 };

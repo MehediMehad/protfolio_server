@@ -1,8 +1,8 @@
 import express from 'express';
 
+import { MeetingRoutes } from '../modules/meetings/meeting.route';
 import { ScheduleRoutes } from '../modules/schedules/schedule.route';
 import { UsersRoutes } from '../modules/users/users.route';
-import { MeetingRoutes } from '../modules/meetings/meeting.route';
 
 const router = express.Router();
 

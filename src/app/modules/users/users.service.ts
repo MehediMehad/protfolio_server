@@ -1,19 +1,16 @@
-import type { Secret } from 'jsonwebtoken';
+import type { JoinedProviderEnum } from '@prisma/client';
 
-import authConfig from '../../configs/auth.config';
 import type { TAuthPayload } from '../../helpers/jwtHelpers';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import prisma from '../../libs/prisma';
-import { JoinedProviderEnum } from '@prisma/client';
 
 type TPayload = {
-  email: string
-  name: string
-  image: string
-  provider: JoinedProviderEnum
-  providerId: string
-
-}
+  email: string;
+  name: string;
+  image: string;
+  provider: JoinedProviderEnum;
+  providerId: string;
+};
 
 const createOrGetUser = async (payload: TPayload) => {
   const { email, name, image, provider, providerId } = payload;
@@ -40,8 +37,8 @@ const createOrGetUser = async (payload: TPayload) => {
     };
 
     // Generate an access token
-    const accessToken = jwtHelpers.generateAuthTokens(data)
-    const refreshToken = jwtHelpers.generateAuthTokens(data)
+    const accessToken = jwtHelpers.generateAuthTokens(data);
+    const refreshToken = jwtHelpers.generateAuthTokens(data);
 
     console.log({ accessToken, refreshToken });
 
@@ -65,8 +62,8 @@ const createOrGetUser = async (payload: TPayload) => {
   };
 
   // Generate an access token
-  const accessToken = jwtHelpers.generateAuthTokens(data).accessToken
-  const refreshToken = jwtHelpers.generateAuthTokens(data).refreshToken
+  const accessToken = jwtHelpers.generateAuthTokens(data).accessToken;
+  const refreshToken = jwtHelpers.generateAuthTokens(data).refreshToken;
 
   console.log({ accessToken, refreshToken });
   return { ...updatedUser, accessToken, refreshToken };

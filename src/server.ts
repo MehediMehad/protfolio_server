@@ -1,6 +1,5 @@
 import type { Server as HttpServer } from 'http';
 
-import { Server as SocketIOServer } from 'socket.io';
 
 import app from './app';
 import appConfig from './app/configs/app.config';

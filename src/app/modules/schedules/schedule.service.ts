@@ -16,6 +16,27 @@ const createSchedule = async (payload: CreateScheduleSchema) => {
   return schedule;
 };
 
+const getAvailableSchedules = async () => {
+  const available = await prisma.schedule.findMany({
+    where: {
+      isBooked: false,
+      date: { gte: new Date() }, // past slots বাদ
+    },
+    orderBy: { date: 'asc' },
+    select: {
+      id: true,
+      admin: true,
+      date: true,
+      startTime: true,
+      endTime: true,
+      isBooked: true
+    }
+  });
+
+  return available
+};
+
 export const ScheduleServices = {
   createSchedule,
+  getAvailableSchedules
 };

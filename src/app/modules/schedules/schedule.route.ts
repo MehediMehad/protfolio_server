@@ -15,4 +15,6 @@ router.post(
   ScheduleControllers.createSchedule,
 );
 
+router.get('/available', ScheduleControllers.getAvailable);
+
 export const ScheduleRoutes = router;

@@ -3,19 +3,20 @@ import sendResponse from "../../utils/sendResponse";
 import { MeetingServices } from "./meeting.service";
 
 
-const bookMeeting = catchAsync(async (req, res) => {
+const createMeeting = catchAsync(async (req, res) => {
     const userId = req.user.userId;
-    const result = await MeetingServices.bookMeeting({ ...req.body, userId });
+    const body = req.body;
+    const result = await MeetingServices.createMeeting(userId, body);
     sendResponse(res, {
         statusCode: 201,
         success: true,
-        message: 'Booking successfull',
+        message: 'Meeting created successfully',
         data: result
     });
 });
 
 export const MeetingControllers = {
-    bookMeeting
+    createMeeting
 }
 
 

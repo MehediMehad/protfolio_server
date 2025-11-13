@@ -11,9 +11,9 @@ const router = express.Router();
 router.post(
     '/',
     auth('USER'),
-    validateRequest(MeetingValidations.bookMeetingSchema),
-    MeetingControllers.bookMeeting,
+    validateRequest(MeetingValidations.createMeetingSchema),
+    MeetingControllers.createMeeting,
 );
 
 
-export const ScheduleRoutes = router;
+export const MeetingRoutes = router;

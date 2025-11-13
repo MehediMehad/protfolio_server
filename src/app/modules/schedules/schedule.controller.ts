@@ -6,7 +6,7 @@ import sendResponse from '../../utils/sendResponse';
 import { Request, Response } from 'express';
 
 const createSchedule = catchAsync(async (req: Request, res: Response) => {
-  const result = await ScheduleServices.createSchedule(req.body);
+  const result = await ScheduleServices.createSchedule(req.body, req.user.userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

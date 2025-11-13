@@ -2,8 +2,11 @@ import type { CreateScheduleSchema } from './schedule.interface';
 import { parseDateTime } from './schedule.utils';
 import prisma from '../../libs/prisma';
 
-const createSchedule = async (payload: CreateScheduleSchema) => {
-  const { adminId, date, startTime, endTime } = payload;
+const createSchedule = async (payload: CreateScheduleSchema, adminId: string) => {
+  const { date, startTime, endTime } = payload;
+
+
+  console.log({ payload });
 
   const schedule = await prisma.schedule.create({
     data: {

@@ -6,7 +6,7 @@ import { jwtHelpers } from '../../helpers/jwtHelpers';
 import prisma from '../../libs/prisma';
 import { JoinedProviderEnum } from '@prisma/client';
 
-type TPayload ={
+type TPayload = {
   email: string
   name: string
   image: string
@@ -65,8 +65,8 @@ const createOrGetUser = async (payload: TPayload) => {
   };
 
   // Generate an access token
-    const accessToken = jwtHelpers.generateAuthTokens(data)
-    const refreshToken = jwtHelpers.generateAuthTokens(data)
+  const accessToken = jwtHelpers.generateAuthTokens(data).accessToken
+  const refreshToken = jwtHelpers.generateAuthTokens(data).refreshToken
 
   console.log({ accessToken, refreshToken });
   return { ...updatedUser, accessToken, refreshToken };

@@ -12,43 +12,43 @@ import prisma from '../libs/prisma';
 
 const auth =
   (...roles: RoleEnum[]) =>
-  async (req: Request & { user?: TAuthPayload }, _res: Response, next: NextFunction) => {
-    try {
-      const token = req.headers.authorization?.split(' ')[1];
+    async (req: Request & { user?: TAuthPayload }, _res: Response, next: NextFunction) => {
+      try {
+        const token = req.headers.authorization?.split(' ')[1];
 
-      if (!token) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+        if (!token) {
+          throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+        }
+
+        const verifiedUser = jwtHelpers.verifyToken(token, authConfig.jwt.access_secret as Secret);
+
+        if (!verifiedUser?.email) {
+          throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+        }
+        const { userId } = verifiedUser;
+
+        const user = await prisma.user.findUnique({
+          where: {
+            id: userId,
+          },
+        });
+        if (!user) {
+          throw new ApiError(httpStatus.NOT_FOUND, 'User not found!');
+        }
+
+        if (user.status === UserStatusEnum.BLOCKED) {
+          throw new ApiError(httpStatus.FORBIDDEN, 'Your account is blocked!');
+        }
+
+        req.user = verifiedUser as JwtPayload & TAuthPayload;
+
+        if (roles.length && !roles.includes(verifiedUser.role)) {
+          throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden!');
+        }
+        next();
+      } catch (err) {
+        next(err);
       }
-
-      const verifiedUser = jwtHelpers.verifyToken(token, authConfig.jwt.access_secret as Secret);
-
-      if (!verifiedUser?.email) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
-      }
-      const { id } = verifiedUser;
-
-      const user = await prisma.user.findUnique({
-        where: {
-          id,
-        },
-      });
-      if (!user) {
-        throw new ApiError(httpStatus.NOT_FOUND, 'User not found!');
-      }
-
-      if (user.status === UserStatusEnum.BLOCKED) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Your account is blocked!');
-      }
-
-      req.user = verifiedUser as JwtPayload & TAuthPayload;
-
-      if (roles.length && !roles.includes(verifiedUser.role)) {
-        throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden!');
-      }
-      next();
-    } catch (err) {
-      next(err);
-    }
-  };
+    };
 
 export default auth;

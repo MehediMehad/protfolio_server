@@ -1,57 +1,44 @@
 import prisma from '../../libs/prisma';
+import { CreateMeetingSchema } from './meeting.interface';
 import { createZoomMeeting } from './meeting.utils';
 
-const bookMeeting = async (payload: {
-    userId: string;
-    scheduleId: string;
-    title: string;
-    description?: string;
-    platform: 'zoom' | 'google_meet';
-}) => {
-    const { userId, scheduleId, title, platform } = payload;
+const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
+    const { scheduleId, title, description, platform } = payload;
 
-    // 1. Find and check if the schedule slot is available
+    // 1. Check slot availability
     const schedule = await prisma.schedule.findUnique({
         where: { id: scheduleId },
     });
 
     if (!schedule || schedule.isBooked) {
-        throw new Error('This slot is not available');
+        throw new Error('Slot is not available');
     }
 
-    // 2. Calculate duration
     const duration = Math.round(
         (schedule.endTime.getTime() - schedule.startTime.getTime()) / 60000
     );
 
-    // 3. Create Zoom/Google Meet meeting
-    let meetingData: any = {};
-
+    // 2. Create Zoom meeting
+    let link = '';
     if (platform === 'zoom') {
-        const zoomToken = process.env.ZOOM_JWT_TOKEN!; // or dynamic
         const zoom = await createZoomMeeting({
             topic: title,
             start_time: schedule.startTime.toISOString(),
             duration,
-            accessToken: zoomToken,
         });
-        meetingData = {
-            platform: 'zoom',
-            link: zoom.join_url,
-            // extra: zoom
-        };
+        link = zoom.join_url;
     }
 
-    // 4. Save to database (transaction)
-    const result = await prisma.$transaction(async (tx) => {
+    // 3. Create meeting in DB
+    const result = await prisma.$transaction(async tx => {
         const meeting = await tx.meeting.create({
             data: {
                 title,
-                description: payload.description,
+                description,
                 startTime: schedule.startTime,
                 endTime: schedule.endTime,
                 platform,
-                link: meetingData.link,
+                link,
                 userId,
                 scheduleId,
             },
@@ -69,5 +56,5 @@ const bookMeeting = async (payload: {
 };
 
 export const MeetingServices = {
-    bookMeeting
-}
+    createMeeting,
+};

@@ -1,12 +1,22 @@
 import type { Secret } from 'jsonwebtoken';
 
 import authConfig from '../../configs/auth.config';
+import type { TAuthPayload } from '../../helpers/jwtHelpers';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import prisma from '../../libs/prisma';
+import { JoinedProviderEnum } from '@prisma/client';
 
-const createOrGetUser = async (payload: any) => {
+type TPayload ={
+  email: string
+  name: string
+  image: string
+  provider: JoinedProviderEnum
+  providerId: string
+
+}
+
+const createOrGetUser = async (payload: TPayload) => {
   const { email, name, image, provider, providerId } = payload;
-  console.log({ payload });
 
   const user = await prisma.user.findUnique({
     where: { email },
@@ -23,19 +33,19 @@ const createOrGetUser = async (payload: any) => {
       },
     });
 
-    // Generate an access token
-    const accessToken = jwtHelpers.generateToken(
-      {
-        id: createdUser.id,
-        email: createdUser.email,
-        role: createdUser.role,
-      },
-      authConfig.jwt.access_secret as Secret,
-      authConfig.jwt.access_expires_in,
-    );
-    console.log({ accessToken });
+    const data: TAuthPayload = {
+      userId: createdUser.id,
+      email: createdUser.email,
+      role: createdUser.role,
+    };
 
-    return { ...createdUser, accessToken };
+    // Generate an access token
+    const accessToken = jwtHelpers.generateAuthTokens(data)
+    const refreshToken = jwtHelpers.generateAuthTokens(data)
+
+    console.log({ accessToken, refreshToken });
+
+    return { ...createdUser, accessToken, refreshToken };
   }
 
   const updatedUser = await prisma.user.update({
@@ -48,18 +58,18 @@ const createOrGetUser = async (payload: any) => {
     },
   });
 
+  const data: TAuthPayload = {
+    userId: updatedUser.id,
+    email: updatedUser.email,
+    role: updatedUser.role,
+  };
+
   // Generate an access token
-  const accessToken = jwtHelpers.generateToken(
-    {
-      id: updatedUser.id,
-      email: updatedUser.email,
-      role: updatedUser.role,
-    },
-    authConfig.jwt.access_secret as Secret,
-    authConfig.jwt.access_expires_in,
-  );
-  console.log({ accessToken });
-  return { ...updatedUser, accessToken };
+    const accessToken = jwtHelpers.generateAuthTokens(data)
+    const refreshToken = jwtHelpers.generateAuthTokens(data)
+
+  console.log({ accessToken, refreshToken });
+  return { ...updatedUser, accessToken, refreshToken };
 };
 
 export const UsersServices = {

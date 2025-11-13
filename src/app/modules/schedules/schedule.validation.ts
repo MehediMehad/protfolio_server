@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Regex for validating a MongoDB ObjectId (24 hex characters)
-const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+export const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 // Time must be in HH:MM format, where MM = 00 or 30
 const timeSchema = z

@@ -1,8 +1,8 @@
 import { Buffer } from 'buffer';
-
 import httpStatus from 'http-status';
-
 import ApiError from '../../errors/ApiError';
+import { google } from 'googleapis';
+import { JWT } from 'google-auth-library';
 
 // Function to get Zoom Access Token using Account-level OAuth credentials
 const getZoomAccessToken = async (): Promise<string> => {
@@ -81,5 +81,57 @@ export const createZoomMeeting = async (payload: {
     join_url: data.join_url,
     start_url: data.start_url,
     meeting_id: data.id,
+  };
+};
+
+
+// Reuse OAuth client
+const getGoogleAuth = () => {
+  const oauth2Client = new google.auth.OAuth2();
+  oauth2Client.setCredentials((global as any).googleTokens);
+  return oauth2Client;
+};
+
+
+
+const auth = new JWT({
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+  key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  scopes: ['https://www.googleapis.com/auth/calendar'],
+});
+
+const calendar = google.calendar({
+  version: 'v3',
+  auth: (auth as unknown) as any,
+});
+
+export const createGoogleMeetEvent = async (payload: {
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  attendeeEmail: string;
+}) => {
+  const event = {
+    summary: payload.title,
+    description: payload.description,
+    start: { dateTime: payload.startTime, timeZone: 'Asia/Dhaka' },
+    end: { dateTime: payload.endTime, timeZone: 'Asia/Dhaka' },
+    attendees: [{ email: payload.attendeeEmail }],
+    conferenceData: {
+      createRequest: { requestId: `meet-${Date.now()}` },
+    },
+    reminders: { useDefault: true },
+  };
+
+  const res = await calendar.events.insert({
+    calendarId: process.env.GOOGLE_CALENDAR_ID!,
+    requestBody: event,
+    conferenceDataVersion: 1,
+  });
+
+  return {
+    link: res.data.hangoutLink!,
+    eventId: res.data.id!,
   };
 };

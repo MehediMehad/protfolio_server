@@ -1,6 +1,9 @@
 import type { CreateMeetingSchema } from './meeting.interface';
 import { createZoomMeeting } from './meeting.utils';
+import { createGoogleMeetEvent } from './meeting.utils';
 import prisma from '../../libs/prisma';
+import ApiError from '../../errors/ApiError';
+import httpStatus from 'http-status';
 
 const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   const { scheduleId, title, description, platform } = payload;
@@ -11,7 +14,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   });
 
   if (!schedule || schedule.isBooked) {
-    throw new Error('Slot is not available');
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Slot is not available');
   }
 
   const duration = Math.round((schedule.endTime.getTime() - schedule.startTime.getTime()) / 60000);
@@ -25,6 +28,20 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
       duration,
     });
     link = zoom.join_url;
+  }
+
+  if (platform === 'google_meet') {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user?.email) throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
+
+    const meet = await createGoogleMeetEvent({
+      title,
+      description,
+      startTime: schedule.startTime.toISOString(),
+      endTime: schedule.endTime.toISOString(),
+      attendeeEmail: user.email,
+    });
+    link = meet.link!;
   }
 
   // 3. Create meeting in DB

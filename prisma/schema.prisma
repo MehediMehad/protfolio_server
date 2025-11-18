@@ -55,6 +55,7 @@ model Meeting {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
 
+  isDeleted  Boolean   @default(true)
   scheduleId String?   @unique @db.ObjectId
   schedule   Schedule? @relation(fields: [scheduleId], references: [id])
 

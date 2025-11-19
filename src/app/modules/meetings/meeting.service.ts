@@ -1,6 +1,5 @@
 import type { CreateMeetingSchema } from './meeting.interface';
-import { createZoomMeeting } from './meeting.utils';
-import { createGoogleMeetEvent } from './meeting.utils';
+import { createGoogleMeetEvent, createZoomMeeting } from './meeting.utils';
 import prisma from '../../libs/prisma';
 import ApiError from '../../errors/ApiError';
 import httpStatus from 'http-status';
@@ -41,6 +40,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
       endTime: schedule.endTime.toISOString(),
       attendeeEmail: user.email,
     });
+
     link = meet.link!;
   }
 

@@ -16,6 +16,11 @@ const config = {
   email: emailConfig,
   S3: s3Config,
   fireBase: serviceAccount,
+  Google: {
+    google_service_account_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    google_private_key: process.env.GOOGLE_PRIVATE_KEY,
+    google_calendar_id: process.env.GOOGLE_CALENDAR_ID,
+  }
 };
 
 export default config;

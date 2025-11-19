@@ -4,7 +4,6 @@ import type { Server as HttpServer } from 'http';
 import app from './app';
 import appConfig from './app/configs/app.config';
 import { getLocalIP } from './app/helpers/devHelpers';
-import { key } from './app/modules/meetings/meeting.utils';
 
 let server: HttpServer;
 
@@ -13,7 +12,6 @@ async function main() {
     // 🟢 Start the server
     const port = appConfig.port || 5000;
     server = app.listen(port, async () => {
-      console.log(key);
 
       console.log(`🚀 Server is running on port ${port}`);
       getLocalIP(); // 🖥️ Your PC's local IPv4 address(es)

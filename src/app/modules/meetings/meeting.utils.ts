@@ -1,19 +1,39 @@
 import { Buffer } from 'buffer';
 import httpStatus from 'http-status';
 import ApiError from '../../errors/ApiError';
-import { google } from 'googleapis';
-import { GoogleAuth } from "google-auth-library";
-import { JWT } from "google-auth-library";
-import { getEnvVar } from '../../utils/getEnvVar';
 import config from '../../configs';
+import { calendar } from '../../configs/google.config';
 
-// Function to get Zoom Access Token using Account-level OAuth credentials
-const getZoomAccessToken = async (): Promise<string> => {
+export const createGoogleCalenderEvent = async (payload: {
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  meetingLink: string;
+}) => {
+  const event = {
+    summary: payload.title,
+    description: `${payload.description || ''}\n\nJoin Link: ${payload.meetingLink}`,
+    start: { dateTime: payload.startTime, timeZone: 'Asia/Dhaka' },
+    end: { dateTime: payload.endTime, timeZone: 'Asia/Dhaka' },
+  };
+
+  await calendar.events.insert({
+    calendarId: config.Google.google_calendar_id,
+    requestBody: event,
+  });
+
+  return true;
+
+};
+
+const ZoomAccessToken = async (): Promise<string> => {
   // Load credentials from environment variables
-  const clientId = process.env.ZOOM_CLIENT_ID!;
-  const clientSecret = process.env.ZOOM_CLIENT_SECRET!;
-  const accountId = process.env.ZOOM_ACCOUNT_ID!;
+  const clientId = config.Zoom.account_id
+  const clientSecret = config.Zoom.client_secret;
+  const accountId = config.Zoom.client_id
 
+  // Validate credentials
   if (!clientId || !clientSecret || !accountId) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Zoom credentials missing');
   }
@@ -41,14 +61,13 @@ const getZoomAccessToken = async (): Promise<string> => {
 };
 
 // Function to create a Zoom meeting for the authenticated user
-export const createZoomMeeting = async (payload: {
+export const createZoomMeetingLink = async (payload: {
   topic: string;
   start_time: string;
   duration: number;
-}) => {
+}): Promise<string> => {
   // Get Zoom access token
-  const token = await getZoomAccessToken();
-  console.log('Zoom Access Token:', token);
+  const token = await ZoomAccessToken();
 
   // Make POST request to Zoom API to create a meeting
   const res = await fetch('https://api.zoom.us/v2/users/me/meetings', {
@@ -80,67 +99,38 @@ export const createZoomMeeting = async (payload: {
   const data = await res.json();
 
   // Return relevant meeting details
-  return {
-    join_url: data.join_url,
-    start_url: data.start_url,
-    meeting_id: data.id,
-  };
+  // return {
+  //   join_url: data.join_url,
+  // };
+
+  return data.join_url
 };
 
-export const key = config.Google.google_private_key?.replace(/\\n/g, "\n");
 
-const auth = new JWT({
-  email: config.Google.google_service_account_email!,
-  key: key,
-  scopes: ["https://www.googleapis.com/auth/calendar"],
-});
+//** THIS IS FOR PAID VERSION CREATE GOOGLE MEET LINK **//
 
+// const auth = new JWT({
+//   email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!,
+//   key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n')!,
+//   scopes: [
+//     'https://www.googleapis.com/auth/calendar',
+//     'https://www.googleapis.com/auth/meetings.space.created',
+//   ],
+// });
 
+// const meet = google.meet('v2');
 
-const calendar = google.calendar({
-  version: "v3",
-  auth: (auth as unknown) as any,
-});
+// export const createGoogleMeetLink = async () => {
+//   const response = await meet.spaces.create({
+//     auth,
+//     requestBody: {},
+//   });
 
+//   const link = response.data.meetingUri!;
+//   const code = response.data.meetingCode;
 
-export const createGoogleMeetEvent = async (payload: {
-  title: string;
-  description?: string;
-  startTime: string;
-  endTime: string;
-  attendeeEmail: string;
-}) => {
-  const event = {
-    summary: payload.title,
-    description: payload.description || 'Booked via portfolio app',
-    start: { dateTime: payload.startTime, timeZone: 'Asia/Dhaka' },
-    end: { dateTime: payload.endTime, timeZone: 'Asia/Dhaka' },
-    conferenceData: {
-      createRequest: {
-        requestId: `meet-${Date.now()}`,
-        // conferenceSolutionKey: { type: 'hangoutsMeet' },
-      },
-    },
-    reminders: { useDefault: true },
-  };
-
-  const response = await calendar.events.insert({
-    calendarId: 'primary',
-    requestBody: event,
-    conferenceDataVersion: 1,
-  });
-
-  const link = response.data.hangoutLink;
-
-  if (!link) {
-    // ফলব্যাক (৯৯% ক্ষেত্রে কাজ করে)
-    const link = `https://meet.google.com/${response.data.id}`;
-    console.log('Using fallback Meet link:', link);
-    return { link, eventId: response.data.id! };
-  }
-
-  return {
-    link,
-    eventId: response.data.id!,
-  };
-};
+//   return {
+//     link,
+//     code,
+//   };
+// };

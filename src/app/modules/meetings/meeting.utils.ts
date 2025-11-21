@@ -29,9 +29,9 @@ export const createGoogleCalenderEvent = async (payload: {
 
 const ZoomAccessToken = async (): Promise<string> => {
   // Load credentials from environment variables
-  const clientId = config.Zoom.account_id
+  const clientId = config.Zoom.client_id;
   const clientSecret = config.Zoom.client_secret;
-  const accountId = config.Zoom.client_id
+  const accountId = config.Zoom.account_id
 
   // Validate credentials
   if (!clientId || !clientSecret || !accountId) {
@@ -97,12 +97,6 @@ export const createZoomMeetingLink = async (payload: {
   }
 
   const data = await res.json();
-
-  // Return relevant meeting details
-  // return {
-  //   join_url: data.join_url,
-  // };
-
   return data.join_url
 };
 

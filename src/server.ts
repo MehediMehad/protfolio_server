@@ -12,7 +12,6 @@ async function main() {
     // 🟢 Start the server
     const port = appConfig.port || 5000;
     server = app.listen(port, async () => {
-
       console.log(`🚀 Server is running on port ${port}`);
       getLocalIP(); // 🖥️ Your PC's local IPv4 address(es)
     });

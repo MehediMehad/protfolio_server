@@ -1,7 +1,8 @@
+import httpStatus from 'http-status';
+
 import { MeetingServices } from './meeting.service';
 import catchAsync from '../../helpers/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import httpStatus from 'http-status';
 
 const createMeeting = catchAsync(async (req, res) => {
   const userId = req.user.userId;
@@ -27,5 +28,5 @@ const getAllMeetings = catchAsync(async (req, res) => {
 
 export const MeetingControllers = {
   createMeeting,
-  getAllMeetings
+  getAllMeetings,
 };

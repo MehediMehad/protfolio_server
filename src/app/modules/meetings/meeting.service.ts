@@ -1,10 +1,11 @@
+import httpStatus from 'http-status';
+
 import type { CreateMeetingSchema } from './meeting.interface';
 import { createGoogleCalenderEvent, createZoomMeetingLink } from './meeting.utils';
-import prisma from '../../libs/prisma';
-import ApiError from '../../errors/ApiError';
-import httpStatus from 'http-status';
-import config from '../../configs';
 import { timeToMinutes } from './meeting.validation';
+import config from '../../configs';
+import ApiError from '../../errors/ApiError';
+import prisma from '../../libs/prisma';
 
 const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   const { date, startTime, endTime, title, description, platform } = payload;
@@ -15,7 +16,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   if (platform === 'zoom') {
     const zoomMeetingLink = await createZoomMeetingLink({
       topic: title,
-      start_time: `${date}T${startTime}`,  // YYYY-MM-DDTHH:mm
+      start_time: `${date}T${startTime}`, // YYYY-MM-DDTHH:mm
       duration,
     });
     link = zoomMeetingLink;
@@ -49,7 +50,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
 const getAllMeetings = async () => {
   const result = await prisma.meeting.findMany({
     where: {
-      isDeleted: false
+      isDeleted: false,
     },
     select: {
       id: true,
@@ -64,15 +65,15 @@ const getAllMeetings = async () => {
         select: {
           id: true,
           name: true,
-          email: true
-        }
-      }
-    }
-  })
+          email: true,
+        },
+      },
+    },
+  });
   return result;
 };
 
 export const MeetingServices = {
   createMeeting,
-  getAllMeetings
+  getAllMeetings,
 };

@@ -1,6 +1,5 @@
 import type { Server as HttpServer } from 'http';
 
-
 import app from './app';
 import appConfig from './app/configs/app.config';
 import { getLocalIP } from './app/helpers/devHelpers';

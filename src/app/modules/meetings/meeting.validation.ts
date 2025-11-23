@@ -1,7 +1,6 @@
 import { MeetingPlatformEnum } from '@prisma/client';
 import z from 'zod';
 
-
 // Time must be in HH:MM format, where MM = 00 or 30
 const timeSchema = z
   .string()
@@ -13,17 +12,19 @@ export const timeToMinutes = (time: string) => {
   return hour * 60 + minute;
 };
 
-export const createMeetingSchema = z.object({
-  date: z.string().datetime({ message: 'Invalid date format' }),
-  startTime: timeSchema,
-  endTime: timeSchema,
-  title: z.string().min(1),
-  description: z.string().optional(),
-  platform: z.enum(MeetingPlatformEnum),
-}).refine((data) => timeToMinutes(data.startTime) < timeToMinutes(data.endTime), {
-  message: 'endTime must be greater than startTime',
-  path: ['endTime'], // error will point to endTime
-});
+export const createMeetingSchema = z
+  .object({
+    date: z.string().datetime({ message: 'Invalid date format' }),
+    startTime: timeSchema,
+    endTime: timeSchema,
+    title: z.string().min(1),
+    description: z.string().optional(),
+    platform: z.enum(MeetingPlatformEnum),
+  })
+  .refine((data) => timeToMinutes(data.startTime) < timeToMinutes(data.endTime), {
+    message: 'endTime must be greater than startTime',
+    path: ['endTime'], // error will point to endTime
+  });
 
 export const MeetingValidations = {
   createMeetingSchema,

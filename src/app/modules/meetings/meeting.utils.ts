@@ -1,8 +1,10 @@
 import { Buffer } from 'buffer';
+
 import httpStatus from 'http-status';
-import ApiError from '../../errors/ApiError';
+
 import config from '../../configs';
 import { calendar } from '../../configs/google.config';
+import ApiError from '../../errors/ApiError';
 
 export const createGoogleCalenderEvent = async (payload: {
   title: string;
@@ -24,14 +26,13 @@ export const createGoogleCalenderEvent = async (payload: {
   });
 
   return true;
-
 };
 
 const ZoomAccessToken = async (): Promise<string> => {
   // Load credentials from environment variables
   const clientId = config.Zoom.client_id;
   const clientSecret = config.Zoom.client_secret;
-  const accountId = config.Zoom.account_id
+  const accountId = config.Zoom.account_id;
 
   // Validate credentials
   if (!clientId || !clientSecret || !accountId) {
@@ -97,11 +98,10 @@ export const createZoomMeetingLink = async (payload: {
   }
 
   const data = await res.json();
-  return data.join_url
+  return data.join_url;
 };
 
-
-//** THIS IS FOR PAID VERSION CREATE GOOGLE MEET LINK **//
+//* * THIS IS FOR PAID VERSION CREATE GOOGLE MEET LINK **//
 
 // const auth = new JWT({
 //   email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL!,

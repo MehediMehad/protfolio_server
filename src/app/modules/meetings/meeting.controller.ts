@@ -15,6 +15,17 @@ const createMeeting = catchAsync(async (req, res) => {
   });
 });
 
+const getAllMeetings = catchAsync(async (req, res) => {
+  const result = await MeetingServices.getAllMeetings();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Meetings retrieved successfully',
+    data: result,
+  });
+});
+
 export const MeetingControllers = {
   createMeeting,
+  getAllMeetings
 };

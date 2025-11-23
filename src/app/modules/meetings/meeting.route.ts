@@ -15,4 +15,10 @@ router.post(
   MeetingControllers.createMeeting,
 );
 
+router.get(
+  '/',
+  auth('USER', "ADMIN"),
+  MeetingControllers.getAllMeetings,
+);
+
 export const MeetingRoutes = router;

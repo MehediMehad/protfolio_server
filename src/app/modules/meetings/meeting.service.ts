@@ -46,8 +46,33 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   return meeting;
 };
 
-
+const getAllMeetings = async () => {
+  const result = await prisma.meeting.findMany({
+    where: {
+      isDeleted: false
+    },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      startTime: true,
+      endTime: true,
+      platform: true,
+      link: true,
+      accepted: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true
+        }
+      }
+    }
+  })
+  return result;
+};
 
 export const MeetingServices = {
   createMeeting,
+  getAllMeetings
 };

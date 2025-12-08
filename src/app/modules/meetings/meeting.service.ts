@@ -4,19 +4,22 @@ import type { CreateMeetingSchema } from './meeting.interface';
 import { createGoogleCalenderEvent, createZoomMeetingLink } from './meeting.utils';
 import { timeToMinutes } from './meeting.validation';
 import config from '../../configs';
-import ApiError from '../../errors/ApiError';
 import prisma from '../../libs/prisma';
 
 const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
-  const { date, startTime, endTime, title, description, platform } = payload;
+  const { date, startTime, endTime, title, description, platform, agenda } = payload;
   const duration = timeToMinutes(endTime) - timeToMinutes(startTime);
+  const pureDate = date.split("T")[0];
+  const dbStartTime = new Date(`${pureDate}T${startTime}:00`).toISOString();
+  const dbEndTime = new Date(`${pureDate}T${endTime}:00`).toISOString();
+
 
   // 2. Create Zoom meeting
   let link = config.Google.meeting_link!; // Manual For(FREE)
   if (platform === 'zoom') {
     const zoomMeetingLink = await createZoomMeetingLink({
       topic: title,
-      start_time: `${date}T${startTime}`, // YYYY-MM-DDTHH:mm
+      start_time: dbStartTime, // YYYY-MM-DDTHH:mm
       duration,
     });
     link = zoomMeetingLink;
@@ -27,11 +30,12 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
     data: {
       title,
       description,
-      startTime: `${date}T${startTime}`,
-      endTime: `${date}T${endTime}`,
+      startTime: dbStartTime,
+      endTime: dbEndTime,
       platform,
       link,
       userId,
+      agenda
     },
   });
 
@@ -39,8 +43,8 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   await createGoogleCalenderEvent({
     title,
     description,
-    startTime: `${date}T${startTime}`,
-    endTime: `${date}T${endTime}`,
+    startTime: dbStartTime,
+    endTime: dbEndTime,
     meetingLink: link!,
   });
 

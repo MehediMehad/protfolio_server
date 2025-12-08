@@ -1,4 +1,4 @@
-import { MeetingPlatformEnum } from '@prisma/client';
+import { MeetingPlatformEnum, AgendaEnum } from '@prisma/client';
 import z from 'zod';
 
 // Time must be in HH:MM format, where MM = 00 or 30
@@ -20,6 +20,7 @@ export const createMeetingSchema = z
     title: z.string().min(1),
     description: z.string().optional(),
     platform: z.enum(MeetingPlatformEnum),
+    agenda: z.enum(AgendaEnum)
   })
   .refine((data) => timeToMinutes(data.startTime) < timeToMinutes(data.endTime), {
     message: 'endTime must be greater than startTime',

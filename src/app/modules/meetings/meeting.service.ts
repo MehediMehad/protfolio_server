@@ -14,7 +14,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   const dbStartTime = new Date(`${pureDate}T${startTime}:00`).toISOString();
   const dbEndTime = new Date(`${pureDate}T${endTime}:00`).toISOString();
 
-  // 2. Create Zoom meeting
+  // Create Zoom meeting
   let link = config.Google.meeting_link!; // Manual For(FREE)
   if (platform === 'zoom') {
     const zoomMeetingLink = await createZoomMeetingLink({
@@ -25,7 +25,39 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
     link = zoomMeetingLink;
   }
 
-  // 3. Create meeting in DB
+  // check if meeting already exists
+  const meetingExists = await prisma.meeting.findFirst({
+    where: {
+      startTime: dbStartTime,
+      endTime: dbEndTime,
+    },
+  });
+
+  if (meetingExists && meetingExists.userId !== userId) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'You already have a meeting scheduled for this time',
+    );
+  }
+
+  // check meeting duration
+  if (duration < 30) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "You can't schedule a meeting shorter than 30 minutes",
+    );
+  }
+
+  if (duration > 120) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "You can't schedule a meeting longer than 2 hours");
+  }
+
+  // check if meeting is already reserved
+  if (meetingExists && meetingExists.status === 'ACCEPTED') {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'This time slot is already reserved');
+  }
+
+  // Create meeting in DB
   const meeting = await prisma.meeting.create({
     data: {
       title,
@@ -39,7 +71,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
     },
   });
 
-  // 4. create google calender event
+  // create google calender event
   await createGoogleCalenderEvent({
     title,
     description,

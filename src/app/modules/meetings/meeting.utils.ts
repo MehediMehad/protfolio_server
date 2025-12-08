@@ -69,7 +69,7 @@ export const createZoomMeetingLink = async (payload: {
 }): Promise<string> => {
   // Get Zoom access token
   const token = await ZoomAccessToken();
-  console.log("date and time", payload.start_time);
+  console.log('date and time', payload.start_time);
 
   // Make POST request to Zoom API to create a meeting
   const res = await fetch('https://api.zoom.us/v2/users/me/meetings', {

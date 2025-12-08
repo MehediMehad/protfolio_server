@@ -20,13 +20,18 @@ export const createMeetingSchema = z
     title: z.string().min(1),
     description: z.string().optional(),
     platform: z.enum(MeetingPlatformEnum),
-    agenda: z.enum(AgendaEnum)
+    agenda: z.enum(AgendaEnum),
   })
   .refine((data) => timeToMinutes(data.startTime) < timeToMinutes(data.endTime), {
     message: 'endTime must be greater than startTime',
     path: ['endTime'], // error will point to endTime
   });
 
+export const acceptOrRejectMeetingSchema = z.object({
+  accepted: z.boolean(),
+});
+
 export const MeetingValidations = {
   createMeetingSchema,
+  acceptOrRejectMeetingSchema,
 };

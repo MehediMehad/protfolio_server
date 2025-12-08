@@ -17,4 +17,11 @@ router.post(
 
 router.get('/', auth('USER', 'ADMIN'), MeetingControllers.getAllMeetings);
 
+router.put(
+  '/:meetingId',
+  auth('ADMIN'),
+  validateRequest(MeetingValidations.acceptOrRejectMeetingSchema),
+  MeetingControllers.acceptOrRejectMeeting,
+);
+
 export const MeetingRoutes = router;

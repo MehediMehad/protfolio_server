@@ -4,15 +4,15 @@ import type { CreateMeetingSchema } from './meeting.interface';
 import { createGoogleCalenderEvent, createZoomMeetingLink } from './meeting.utils';
 import { timeToMinutes } from './meeting.validation';
 import config from '../../configs';
+import ApiError from '../../errors/ApiError';
 import prisma from '../../libs/prisma';
 
 const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
   const { date, startTime, endTime, title, description, platform, agenda } = payload;
   const duration = timeToMinutes(endTime) - timeToMinutes(startTime);
-  const pureDate = date.split("T")[0];
+  const pureDate = date.split('T')[0];
   const dbStartTime = new Date(`${pureDate}T${startTime}:00`).toISOString();
   const dbEndTime = new Date(`${pureDate}T${endTime}:00`).toISOString();
-
 
   // 2. Create Zoom meeting
   let link = config.Google.meeting_link!; // Manual For(FREE)
@@ -35,7 +35,7 @@ const createMeeting = async (userId: string, payload: CreateMeetingSchema) => {
       platform,
       link,
       userId,
-      agenda
+      agenda,
     },
   });
 
@@ -64,7 +64,7 @@ const getAllMeetings = async () => {
       endTime: true,
       platform: true,
       link: true,
-      accepted: true,
+      status: true,
       user: {
         select: {
           id: true,
@@ -77,7 +77,53 @@ const getAllMeetings = async () => {
   return result;
 };
 
+const acceptOrRejectMeeting = async (meetingId: string, accepted: boolean) => {
+  // find meeting
+  const meeting = await prisma.meeting.findUnique({
+    where: {
+      id: meetingId,
+    },
+    select: { startTime: true, status: true },
+  });
+
+  // check if meeting exists
+  if (!meeting) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Meeting not found');
+  }
+
+  // check if meeting has passed
+  const now = new Date();
+  if (meeting.startTime < now) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Meeting has already passed');
+  }
+
+  // check if meeting has been accepted
+  if (meeting.status === 'ACCEPTED' && !accepted) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Meeting has already been accepted');
+  }
+
+  // check if meeting has been rejected
+  if (meeting.status === 'REJECTED' && accepted) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Meeting has already been rejected');
+  }
+
+  const result = await prisma.meeting.update({
+    where: {
+      id: meetingId,
+    },
+    data: {
+      status: accepted ? 'ACCEPTED' : 'REJECTED',
+    },
+  });
+
+  return {
+    result,
+    message: `Meeting ${accepted ? 'accepted' : 'rejected'} successfully`,
+  };
+};
+
 export const MeetingServices = {
   createMeeting,
   getAllMeetings,
+  acceptOrRejectMeeting,
 };

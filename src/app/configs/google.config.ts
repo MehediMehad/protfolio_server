@@ -14,7 +14,7 @@ const auth = new JWT({
 
 const calendar = google.calendar({
   version: 'v3',
-  auth: auth as unknown as any,
+  auth: auth as unknown as any, // eslint-disable-line
 });
 
 export { calendar };

@@ -10,7 +10,7 @@ const router = express.Router();
 // Create new meeting
 router.post(
   '/',
-  auth('USER'),
+  // auth('USER'),  // TODO: ADD: auth(USER)
   validateRequest(MeetingValidations.createMeetingSchema),
   MeetingControllers.createMeeting,
 );

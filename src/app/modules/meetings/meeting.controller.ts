@@ -6,7 +6,8 @@ import catchAsync from '../../helpers/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 
 const createMeeting = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.userId;
+  // const userId = req.user.userId; // TODO: ADD: auth userId
+  const userId = "69159273169e09495ba2e27d"; // Remove this after auth
   const body = req.body;
   const result = await MeetingServices.createMeeting(userId, body);
   sendResponse(res, {

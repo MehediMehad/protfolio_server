@@ -15,7 +15,7 @@ router.post(
   MeetingControllers.createMeeting,
 );
 
-router.get('/', auth('USER', 'ADMIN'), MeetingControllers.getAllMeetings);
+router.get('/', MeetingControllers.getAllMeetings); // TODO: ADD: auth(USER, ADMIN)
 
 router.put(
   '/:meetingId',

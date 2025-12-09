@@ -97,6 +97,9 @@ const getAllMeetings = async () => {
       platform: true,
       link: true,
       status: true,
+      agenda: true,
+      createdAt: true,
+      updatedAt: true,
       user: {
         select: {
           id: true,
@@ -104,6 +107,9 @@ const getAllMeetings = async () => {
           email: true,
         },
       },
+    },
+    orderBy: {
+      startTime: 'asc',
     },
   });
   return result;

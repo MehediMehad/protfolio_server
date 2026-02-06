@@ -1,11 +1,11 @@
-import express from 'express';
+import { Router } from 'express';
 
 import { MeetingControllers } from './meeting.controller';
 import { MeetingValidations } from './meeting.validation';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 
-const router = express.Router();
+const router = Router();
 
 // Create new meeting
 router.post(

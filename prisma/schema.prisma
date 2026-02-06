@@ -24,24 +24,24 @@ model User {
 }
 
 model Project {
-  id           String              @id @default(auto()) @map("_id") @db.ObjectId
-  title        String
-  description  String
-  overview     String
-  type         ProjectTypeEnum
-  category     ProjectCategoryEnum // e.g. full-stack, frontend, backend, mobile
-  technologies String[] // e.g. ["React", "Node.js", "MongoDB"]
-  mainFeatures String[] // e.g. ["User Authentication", "Real-time Chat", "Payment Integration"]
-  metadata    Json?
-  image        String
-  liveUrl      String           
-  frontendGitHubUrl  String?
-  backendGitHubUrl   String?
-  githubUrl    String?
-  isDeleted    Boolean             @default(false)
-  isFeatured   Boolean             @default(false)
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  title             String
+  description       String
+  overview          String
+  type              ProjectTypeEnum
+  category          ProjectCategoryEnum // e.g. full-stack, frontend, backend, mobile
+  technologies      String[] // e.g. ["React", "Node.js", "MongoDB"]
+  mainFeatures      String[] // e.g. ["User Authentication", "Real-time Chat", "Payment Integration"]
+  metadata          Json
+  image             String
+  liveUrl           String
+  frontendGitHubUrl String?
+  backendGitHubUrl  String?
+  githubUrl         String?
+  isDeleted         Boolean             @default(false)
+  isFeatured        Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
 
   @@map("projects")
 }
@@ -63,7 +63,6 @@ enum ProjectTypeEnum {
   research
   prototype
 }
-
 
 enum ProjectCategoryEnum {
   full_stack

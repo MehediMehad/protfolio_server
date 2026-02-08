@@ -24,26 +24,38 @@ model User {
 }
 
 model Project {
-  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  id                String               @id @default(auto()) @map("_id") @db.ObjectId
   title             String
+  subtitle          String
   description       String
   overview          String
   type              ProjectTypeEnum
   category          ProjectCategoryEnum // e.g. full-stack, frontend, backend, mobile
+  status            ProjectStatusEnum // e.g. "In Progress", "Completed"
   technologies      String[] // e.g. ["React", "Node.js", "MongoDB"]
-  mainFeatures      String[] // e.g. ["User Authentication", "Real-time Chat", "Payment Integration"]
-  metadata          Json
+  features          String[] // e.g. ["User authentication", "Real-time chat", "Responsive design"]
+  rolesFeatures     TUserRoleFeature[]
+  highlights        TProjectHighlights[]
   image             String
   liveUrl           String
-  frontendGitHubUrl String?
-  backendGitHubUrl  String?
-  githubUrl         String?
-  isDeleted         Boolean             @default(false)
-  isFeatured        Boolean             @default(false)
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
+  frontendGitHubUrl String
+  backendGitHubUrl  String
+  isDeleted         Boolean              @default(false)
+  isFeatured        Boolean              @default(false)
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
 
   @@map("projects")
+}
+
+type TUserRoleFeature {
+  role     String // Customer, Admin, Contributor, etc.
+  features String[] // e.g. ["Browse and search products", "Add items to cart", "Secure checkout with Stripe"]
+}
+
+type TProjectHighlights {
+  title       String
+  description String
 }
 
 enum ProjectTypeEnum {
@@ -69,6 +81,11 @@ enum ProjectCategoryEnum {
   frontend
   backend
   mobile
+}
+
+enum ProjectStatusEnum {
+  IN_PROGRESS
+  COMPLETED
 }
 
 model Meeting {

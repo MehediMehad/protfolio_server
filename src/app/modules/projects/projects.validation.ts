@@ -3,8 +3,24 @@ import { ProjectTypeEnum, ProjectCategoryEnum } from "@prisma/client";
 
 const urlSchema = z.string().url("Invalid URL");
 
+const roleFeatureSchema = z.object({
+    role: z.string().min(1, "Role is required"),
+    features: z
+        .array(z.string().min(1))
+        .min(1, "At least one feature is required"),
+});
+
+const projectHighlightSchema = z.object({
+    title: z.string().min(1, "Highlight title is required"),
+    description: z
+        .string()
+        .min(5, "Highlight description must be at least 5 characters"),
+});
+
 export const createProjectSchema = z.object({
     title: z.string().min(1, "Title is required"),
+
+    subtitle: z.string().min(1, "Subtitle is required"),
 
     description: z
         .string()
@@ -16,33 +32,36 @@ export const createProjectSchema = z.object({
 
     type: z.enum(ProjectTypeEnum),
 
+    status: z.enum(ProjectTypeEnum),
+
     category: z.enum(ProjectCategoryEnum),
 
     technologies: z
         .array(z.string().min(1))
         .min(1, "At least one technology is required"),
 
-    mainFeatures: z
+    features: z
         .array(z.string().min(1))
         .min(1, "At least one feature is required"),
 
-    metadata: z.record(z.string(), z.any()),
+    rolesFeatures: z
+        .array(roleFeatureSchema)
+        .min(1, "At least one role feature is required"),
+
+    highlights: z
+        .array(projectHighlightSchema)
+        .min(1, "At least one highlight is required"),
 
     image: urlSchema,
 
     liveUrl: urlSchema,
 
-    frontendGitHubUrl: urlSchema.optional(),
+    frontendGitHubUrl: urlSchema,
 
-    backendGitHubUrl: urlSchema.optional(),
+    backendGitHubUrl: urlSchema,
 
-    githubUrl: urlSchema.optional(),
-}).refine((data) => {
-    if (!data.frontendGitHubUrl && !data.backendGitHubUrl && !data.githubUrl) {
-        return false;
-    }
-    return true;
-})
+    isFeatured: z.boolean().optional(),
+});
 
 export const ProjectValidations = {
     createProjectSchema,

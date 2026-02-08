@@ -8,6 +8,20 @@ const createBlog = async (payload: TCreateBlog) => {
     return blog;
 };
 
+const getFeaturedBlogs = async () => {
+    const blogs = await prisma.blog.findMany({
+        where: {
+            featured: true,
+        },
+        orderBy: {
+            createdAt: 'desc',
+        },
+    });
+    return blogs;
+};
+
+
 export const BlogServices = {
     createBlog,
+    getFeaturedBlogs
 };

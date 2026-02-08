@@ -19,4 +19,7 @@ router.post(
 );
 
 
+// Get featured blogs
+router.get('/featured', BlogControllers.getFeaturedBlogs);
+
 export const BlogRoutes = router;

@@ -16,7 +16,18 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
+const getFeaturedBlogs = catchAsync(async (_req: Request, res: Response) => {
+    const result = await BlogServices.getFeaturedBlogs();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Featured blogs retrieved successfully',
+        data: result,
+    });
+});
+
 
 export const BlogControllers = {
     createBlog,
+    getFeaturedBlogs
 };

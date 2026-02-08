@@ -48,6 +48,22 @@ model Project {
   @@map("projects")
 }
 
+model Blog {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String    @unique
+  slug        String    @unique // for URL-friendly links
+  content     String // full blog content, can store Markdown or HTML
+  excerpt     String // short summary
+  tags        String[] // e.g. ["React", "Prisma", "Web Development", "Node.js", "MongoDB", "Programming", "Tech"]
+  featured    Boolean   @default(false) // featured blog post
+  image       String //  cover image
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime? // optional publish date
+
+  @@map("blogs")
+}
+
 type TUserRoleFeature {
   role     String // Customer, Admin, Contributor, etc.
   features String[] // e.g. ["Browse and search products", "Add items to cart", "Secure checkout with Stripe"]

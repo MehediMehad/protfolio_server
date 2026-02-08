@@ -11,12 +11,22 @@ const createProject = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
         statusCode: httpStatus.CREATED,
         success: true,
-        message: 'Meeting created successfully',
+        message: 'Project created successfully',
         data: result,
     });
 });
 
+const getFeaturedProjects = catchAsync(async (_req: Request, res: Response) => {
+    const result = await ProjectServices.getFeaturedProjects();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Projects retrieved successfully',
+        data: result,
+    });
+});
 
 export const ProjectControllers = {
-    createProject
+    createProject,
+    getFeaturedProjects
 };

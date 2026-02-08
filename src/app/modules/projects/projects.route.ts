@@ -16,6 +16,7 @@ router.post(
     ProjectControllers.createProject,
 );
 
+router.get('/featured', ProjectControllers.getFeaturedProjects);
 
 
 export const ProjectRoutes = router;

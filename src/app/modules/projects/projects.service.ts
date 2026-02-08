@@ -11,7 +11,16 @@ const createProject = async (payload: TCreateProject) => {
     });
     return project;
 };
+const getFeaturedProjects = async () => {
+    const projects = await prisma.project.findMany({
+        where: {
+            isFeatured: true
+        },
+    });
+    return projects;
+};
 
 export const ProjectServices = {
     createProject,
+    getFeaturedProjects
 };

@@ -6,14 +6,6 @@ const urlSchema = z.string().url("Invalid URL");
 export const createBlogSchema = z.object({
     title: z.string().min(1, "Title is required"),
 
-    slug: z
-        .string()
-        .min(1, "Slug is required")
-        .regex(
-            /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-            "Slug must be URL-friendly (lowercase letters, numbers, and hyphens only)"
-        ),
-
     content: z
         .string()
         .min(20, "Content must be at least 20 characters"),
@@ -31,7 +23,6 @@ export const createBlogSchema = z.object({
 
     featured: z.boolean().optional(),
 
-    publishedAt: z.date().optional(),
 });
 
 export const BlogValidations = {

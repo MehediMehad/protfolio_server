@@ -19,8 +19,15 @@ const getFeaturedProjects = async () => {
     });
     return projects;
 };
+const getProjectById = async (id: string) => {
+    const project = await prisma.project.findUniqueOrThrow({
+        where: { id }
+    });
+    return project;
+};
 
 export const ProjectServices = {
     createProject,
-    getFeaturedProjects
+    getFeaturedProjects,
+    getProjectById
 };

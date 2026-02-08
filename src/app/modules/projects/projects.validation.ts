@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProjectTypeEnum, ProjectCategoryEnum } from "@prisma/client";
+import { ProjectTypeEnum, ProjectCategoryEnum, ProjectStatusEnum } from "@prisma/client";
 
 const urlSchema = z.string().url("Invalid URL");
 
@@ -32,7 +32,7 @@ export const createProjectSchema = z.object({
 
     type: z.enum(ProjectTypeEnum),
 
-    status: z.enum(ProjectTypeEnum),
+    status: z.enum(ProjectStatusEnum),
 
     category: z.enum(ProjectCategoryEnum),
 

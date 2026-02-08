@@ -16,6 +16,7 @@ router.post(
     ProjectControllers.createProject,
 );
 
+router.get('/details/:id', ProjectControllers.getProjectById);
 router.get('/featured', ProjectControllers.getFeaturedProjects);
 
 

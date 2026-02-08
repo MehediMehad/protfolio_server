@@ -18,6 +18,8 @@ router.post(
     BlogControllers.createBlog,
 );
 
+// Get a single blog by ID
+router.get('/details/:id', BlogControllers.getBlogById);
 
 // Get featured blogs
 router.get('/featured', BlogControllers.getFeaturedBlogs);

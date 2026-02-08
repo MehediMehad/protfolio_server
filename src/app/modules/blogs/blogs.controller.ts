@@ -26,8 +26,20 @@ const getFeaturedBlogs = catchAsync(async (_req: Request, res: Response) => {
     });
 });
 
+const getBlogById = catchAsync(async (req: Request, res: Response) => {
+    const id = req.params.id;
+    const result = await BlogServices.getBlogById(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Blog retrieved successfully',
+        data: result,
+    });
+});
+
 
 export const BlogControllers = {
     createBlog,
-    getFeaturedBlogs
+    getFeaturedBlogs,
+    getBlogById
 };

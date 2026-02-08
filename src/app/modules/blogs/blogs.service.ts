@@ -20,8 +20,16 @@ const getFeaturedBlogs = async () => {
     return blogs;
 };
 
+const getBlogById = async (id: string) => {
+    const blog = await prisma.blog.findUniqueOrThrow({
+        where: { id },
+    });
+    return blog;
+};
+
 
 export const BlogServices = {
     createBlog,
-    getFeaturedBlogs
+    getFeaturedBlogs,
+    getBlogById
 };

@@ -6,14 +6,15 @@
   "scripts": {
     "start": "node ./dist/server.js",
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "prisma:generate": "prisma generate",
     "prisma:studio": "prisma studio",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "check-format": "prettier --check .",
-    "generate:module": "node scripts/generateModule.js"
+    "generate:module": "node scripts/generateModule.js",
+    "postinstall": "prisma generate"
   },
   "keywords": [],
   "author": "",
